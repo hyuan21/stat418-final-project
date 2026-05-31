@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env
+
+# Data — large files should NOT be committed
+data/raw/
+data/processed/*.parquet
+data/processed/*.csv
+!data/processed/.gitkeep
+
+# Model artifacts — keep small ones, ignore large training outputs
+*.pkl
+*.joblib
+*.h5
+!api/artifacts/model.pkl
+!api/artifacts/lookup_tables.parquet
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# Secrets — NEVER commit
+.env.local
+*.key
+*.pem
+service-account.json
+gcp-credentials.json
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Cache
+.cache/
+nba_api_cache/
+pytest-cache-files-*/
+*.tmp
+~$*

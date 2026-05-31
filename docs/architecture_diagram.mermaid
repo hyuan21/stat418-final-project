@@ -1,0 +1,38 @@
+flowchart LR
+    subgraph DataSource["📦 Data Source"]
+        NBA[NBA Stats API<br/>nba_api]
+    end
+
+    subgraph Pipeline["🛠 Data & Model Pipeline"]
+        Scrape[Scraper<br/>src/data/]
+        Raw[(Raw JSON<br/>data/raw/)]
+        Feat[Feature Engineering<br/>src/data/build_features.py]
+        Proc[(Processed Parquet<br/>data/processed/)]
+        Train[Model Training<br/>src/models/]
+        Model[(Trained Model<br/>api/artifacts/model.pkl)]
+    end
+
+    subgraph Serving["☁️ Cloud Serving"]
+        API[Flask API<br/>Google Cloud Run]
+        APP[Streamlit App<br/>Streamlit Cloud]
+    end
+
+    subgraph User["👤 User"]
+        Browser[Web Browser]
+    end
+
+    NBA -->|HTTPS| Scrape
+    Scrape --> Raw
+    Raw --> Feat
+    Feat --> Proc
+    Proc --> Train
+    Train --> Model
+    Model --> API
+    Proc --> API
+    APP -->|REST POST /predict| API
+    Browser -->|HTTPS| APP
+
+    style NBA fill:#1d4ed8,color:#fff
+    style API fill:#059669,color:#fff
+    style APP fill:#dc2626,color:#fff
+    style Model fill:#7c3aed,color:#fff
