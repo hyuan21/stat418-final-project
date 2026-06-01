@@ -27,7 +27,16 @@ from config import (
 )
 
 
-AVAILABLE_SEASONS_REPLAY = ["2025-26", "2024-25", "2023-24"]
+# Two season lists for the two modes.
+# Replay needs a finished season (with full playoff data) so the App can
+# show actual results next to model predictions. 2025-26 playoffs are
+# still in progress and only partially scraped, so Replay restricts to
+# 2023-24 and 2024-25.
+# What-if uses only the player's regular-season baseline to predict a
+# hypothetical / not-yet-played game, so it can use 2025-26's
+# regular-season data even while the playoffs are in progress.
+AVAILABLE_SEASONS_REPLAY = ["2024-25", "2023-24"]
+AVAILABLE_SEASONS_WHATIF = ["2025-26", "2024-25", "2023-24"]
 
 
 # ============ Page setup ============
@@ -149,6 +158,11 @@ with st.sidebar:
     if is_replay:
         # --- Replay Mode: cascading dropdowns from real data ---
         season = st.selectbox("Season", AVAILABLE_SEASONS_REPLAY, index=0)
+        st.caption(
+            "ℹ️ The 2025-26 playoffs are still in progress, so Replay mode "
+            "only supports completed seasons (2023-24 and 2024-25). "
+            "To predict 2025-26 playoff games, switch to **What-if mode**."
+        )
 
         players = fetch_players(season=season)
         if not players:
@@ -205,10 +219,16 @@ with st.sidebar:
         # --- What-if Mode: free-form ---
         season = st.selectbox(
             "Season (for the player's regular-season stats)",
-            AVAILABLE_SEASONS_REPLAY, index=0,
+            AVAILABLE_SEASONS_WHATIF, index=0,
             help="The model uses this season's regular-season averages as the "
                  "player's baseline.",
         )
+        if season == "2025-26":
+            st.caption(
+                "🔮 **Predicting the future.** You're using 2025-26 "
+                "regular-season stats to predict a playoff game that may "
+                "not have happened yet."
+            )
 
         # Show ALL players (not restricted to playoff participants)
         players = fetch_players(season=None)
@@ -308,11 +328,13 @@ if not predict_clicked:
         **🎬 Replay mode** — Pick an actual 2023–24 or 2024–25 playoff
         player-game. The model gives its pre-game prediction; the app then
         shows what really happened so you can see whether the prediction
-        was right.
+        was right. *Restricted to completed seasons with full playoff data.*
 
-        **💡 What-if mode** — Pick any player, any opponent (even matchups
-        that never happened), and any series situation. The model gives a
-        prediction; no real-game result is shown.
+        **💡 What-if mode** — Pick any player, any opponent, and any series
+        situation. Use this to **predict 2025–26 playoff games that haven't
+        happened yet** (using the player's 2025–26 regular-season stats as
+        the baseline), or ask hypothetical questions like
+        "how would Jokić do against the 1996 Bulls?"
 
         ### What "underperform" means
 
