@@ -27,7 +27,7 @@ from config import (
 )
 
 
-AVAILABLE_SEASONS_REPLAY = ["2024-25", "2023-24"]
+AVAILABLE_SEASONS_REPLAY = ["2025-26", "2024-25", "2023-24"]
 
 
 # ============ Page setup ============
@@ -130,13 +130,15 @@ def call_predict(payload: dict) -> dict[str, Any] | None:
 with st.sidebar:
     mode = st.radio(
         "Mode",
-        ["🎬 Replay (real game)", "💡 What-if (hypothetical)"],
+        ["🎬 Replay (real game)", "💡 What-if / Predict the future"],
         index=0,
         help=(
-            "Replay: pick a real 2023–25 playoff game and see model "
+            "Replay: pick a real 2023–26 playoff game and see model "
             "prediction vs actual result.\n\n"
-            "What-if: pick any player + any opponent + any game number, "
-            "including hypothetical matchups."
+            "What-if: pick any player + any opponent + any game number. "
+            "Use this to predict ongoing 2025-26 playoff games before they "
+            "happen, or to ask hypothetical questions like 'how would Jokic "
+            "do against the 1996 Bulls'."
         ),
     )
     is_replay = mode.startswith("🎬")
