@@ -29,6 +29,7 @@ services:
     environment:
       - API_URL=http://api:8080
       - PYTHONUNBUFFERED=1
+      - PORT=8501            # override Cloud Run's 8080 for local docker-compose
     depends_on:
       - api
     restart: unless-stopped

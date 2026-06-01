@@ -4,9 +4,18 @@
 
 A machine learning system that predicts whether an NBA player will underperform in a specific playoff game relative to their regular-season baseline, using historical box-score statistics from 2003–2025.
 
-**🔗 Live App:** [URL coming soon]
-**🔗 Live API:** [URL coming soon]
-**🔗 API Docs (Swagger):** [URL coming soon]
+## 🔗 Deployed services
+
+The application is deployed in **two places** for redundancy during the evaluation window. Both serve the same model and the same Cloud Run API.
+
+| Service | Platform | URL |
+|---|---|---|
+| **Web App (primary)** | Google Cloud Run | https://nba-playoff-app-803317660037.us-central1.run.app |
+| Web App (backup) | Streamlit Community Cloud | https://stat418-final-project-stnrtix9jwpgzt5m6cfhfy.streamlit.app |
+| **Model API** | Google Cloud Run | https://nba-playoff-api-803317660037.us-central1.run.app |
+| API docs (Swagger UI) | Google Cloud Run | https://nba-playoff-api-803317660037.us-central1.run.app/docs |
+
+> **Note on app hosting.** The project rubric specifies that "the App should be hosted on shinyapps.io or Google Cloud Run." The Cloud Run App URL above satisfies that requirement. The Streamlit Community Cloud URL is kept as a secondary, redundant deployment of the same Streamlit code — it deploys automatically on every push to `main` and serves as a backup if Cloud Run has cold-start issues. Both point to the same Flask API on Cloud Run.
 
 ---
 
@@ -49,7 +58,7 @@ flowchart LR
 
     subgraph Serving["☁️ Cloud Serving"]
         API[Flask API<br/>Google Cloud Run]
-        APP[Streamlit App<br/>Streamlit Cloud]
+        APP[Streamlit App<br/>Google Cloud Run]
     end
 
     subgraph User["👤 User"]
@@ -145,7 +154,7 @@ docker-compose up --build
 | **Model explainability** | SHAP — both global feature importance and per-prediction explanations surfaced in the App |
 | **API** | Flask + flask-restx with auto-generated Swagger docs, input validation, structured error responses |
 | **App** | Streamlit with two interaction modes: simple ("select player + opponent") and Advanced ("override stats for what-if analysis") |
-| **Deployment** | API on Google Cloud Run, App on Streamlit Community Cloud |
+| **Deployment** | Both API and App on Google Cloud Run (App also mirrored to Streamlit Community Cloud as backup) |
 | **Testing** | pytest for API endpoints, data validation, feature engineering |
 | **CI/CD** | GitHub Actions runs tests on every push and rebuilds Docker images on main |
 
