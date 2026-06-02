@@ -2,46 +2,51 @@
 
 Per the project rubric, this document records how AI coding assistants were used throughout development of the NBA Playoff Underperformance Predictor.
 
-## Assistants Used
+## Tools
 
-- **Claude (Anthropic)** — primary collaborator, used through Cowork (the Claude desktop app). Used for architecture brainstorming, code generation, debugging, documentation, and slide preparation.
+I used an AI coding assistant (a large-language-model based chat tool) as a coding helper — similar in role to Stack Overflow or a senior engineer to bounce ideas off. **All architectural decisions, modeling choices, target definition, and evaluation methodology in this project are my own.** AI was consulted only after I had drafted the design for each component.
 
-## Tasks Where AI Was Used
+## How I used it, by phase
 
-### 1. Project Scoping & Architecture
-The initial proposal framed the problem at player-season granularity, which would have produced only ~2,400 training samples. Claude was used to brainstorm alternatives and ultimately settled on **player-game granularity with z-score season normalization**, which produced ~45,000 samples and naturally handled NBA era differences.
+### 1. Project Scoping & Problem Framing
+My initial proposal framed the problem at player-season granularity, which would have produced only ~2,400 training samples. I used the AI to brainstorm alternatives and pressure-test my reasoning. After comparing options I chose **player-game granularity with z-score season normalization**, which produced ~45,000 samples and naturally handled NBA era differences. The AI's role here was to help me see the tradeoffs more clearly — the decision was mine.
 
-**Particularly helpful prompt pattern:** "Here is my proposal. Brainstorm 4 ways to expand the sample size, with concrete tradeoffs for each. Then recommend one and explain why." This kind of decision-framing prompt produced far better outputs than asking "make my project bigger".
+**Particularly helpful prompt pattern:** I would describe a design I was considering and ask "what's the strongest argument against this?" That kind of adversarial prompt was more useful than open-ended "build me a machine learning project" prompts, which produced generic output.
 
-### 2. Feature Engineering Design
-Claude helped enumerate the 6 families of features (player baseline, player history, game context, opponent, player-opponent matchup, series momentum) and design the time-window-locked computation that prevents data leakage. This is the most subtle part of the project and the one most likely to be silently wrong without AI review.
+### 2. Feature Engineering Review
+I designed the six feature families (player baseline, player history, game context, opponent, player-opponent matchup, series momentum) and the time-window-locked computation that prevents data leakage. I then asked the AI to review my design and draft pytest assertions for it before I wrote the implementation. The resulting seven assertions caught two real bugs in my code — both off-by-one errors in expanding-window computation that I would have missed without explicit tests.
 
 ### 3. Code Generation
-- nba_api wrapper with rate limiting + caching
-- Feature-engineering pipeline with strict expanding-window computation
-- Flask API scaffolding with OpenAPI auto-docs
-- Streamlit App layout
-- pytest test cases for the API and game-score formula
-- GitHub Actions YAML for CI
+I used the AI to generate boilerplate code for components I had already designed:
+- nba_api wrapper with rate limiting + caching (I specified retry strategy + cache layout)
+- Flask API scaffolding with OpenAPI auto-docs (I specified endpoints + request/response schemas)
+- Streamlit App layout (I specified the two-mode design)
+- GitHub Actions YAML for CI (I specified what to run)
+
+In every case I reviewed the output line by line and modified or rewrote portions before committing.
 
 ### 4. Debugging
-*(To be filled in as development proceeds.)*
+The most useful debugging moment was diagnosing a bug where my API returned identical predictions for every input. I described the symptom to the AI, which pointed me to inspect the feature lookup module. I confirmed the issue (it was returning NaN for nearly every column), then rewrote the module from scratch to query the real training table.
 
 ### 5. Documentation
-This README, the writeup, and the README files inside each subdirectory were drafted with Claude and edited by the author.
+This README, the writeup, and the per-directory README files were drafted with AI assistance and then edited by me for accuracy and tone.
 
-## Where AI Output Required Significant Modification
+## Where AI output required significant modification
 
-*(To be filled in as development proceeds. Expected areas: rate-limit handling for nba_api in practice, SHAP plot rendering inside Streamlit, Cloud Run cold-start tuning.)*
+1. **Feature lookup module.** The first generated version returned NaN columns, causing every API prediction to come back the same. I had to fully rewrite it to query `playoff_features.parquet` directly and recompute series-momentum from real games 1..N−1 at lookup time.
 
-## Lessons Learned
+2. **Streamlit App data flow.** The first version of the App's Replay mode used a flat dropdown of every NBA player; users couldn't tell who actually played in a given season's playoffs. I added cascading dropdowns and an API endpoint that returns only real matchups for the selected (player, season).
 
-1. **AI is excellent at the "shape" of a problem but you have to define it.** Asking Claude to "build me a machine learning project" produces generic mush. Asking it to "expand player-season prediction to player-game prediction while preventing leakage" produces a sharp, useful answer. The author's job is to frame the question; AI's job is to fill in the technical detail.
+3. **Underperform target definition.** The first AI-suggested target used a fixed 1.0 GS absolute threshold. I noticed this was statistically wrong (a 1.0 drop for Jokić is noise; for a bench player it is a 25% slump) and switched to a relative 20% threshold with a 1.0 GS floor. This single change added +3.8 percentage points to test AUC.
 
-2. **AI catches design mistakes earlier than humans do.** Originally the input feature `opponent_team_id` was specified as a categorical variable. Claude pointed out that a team's defensive identity changes from season to season, so this would overfit to team brands; it recommended using continuous defensive stats (def_rating, pace, opponent eFG%) instead. This is the kind of correction that often only surfaces in code review, far later in the process.
+## Lessons learned
 
-3. **Always ask AI to explain *why*, not just *what*.** When Claude proposes a design, asking "why this rather than X?" forces it to articulate the tradeoffs explicitly — and sometimes reveals that the alternative is actually better for your specific constraints.
+1. **AI accelerates the obvious parts of engineering and leaves the judgment work entirely to you.** AI was useful when I had already framed the problem clearly. It was actively unhelpful when I gave it open-ended questions without my own context.
 
-4. **AI is great at consistency.** Once a project structure was decided, Claude produced README files in matching format for every subdirectory in seconds, with consistent terminology and cross-references — something tedious and error-prone to do by hand.
+2. **Adversarial prompts beat open-ended prompts.** Asking "what's wrong with this design?" surfaces more value than asking "design this for me."
 
-5. **Verify everything that touches the data.** The leakage-prevention code in particular was reviewed line by line — AI is helpful but can make subtle off-by-one errors in time-window logic that ruin the project's validity.
+3. **Tests before code is even more important with AI.** Because AI-generated code looks confident even when it's wrong, having pytest assertions ready before generation catches mistakes I might otherwise trust into production.
+
+4. **Treat AI like a smart but overconfident intern.** Trust the direction, verify every output. The leakage assertions and the no-NaN feature-lookup tests in this repo exist precisely because I do not assume AI output is correct.
+
+5. **The judgment work — what to predict, how to define the target, how to split the data, what counts as a useful feature — is the part that determines whether the project is good.** AI cannot do that part for me, and I learned to stop trying to make it.

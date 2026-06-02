@@ -181,7 +181,7 @@ No information from game N or later is used in any feature. Splits are strictly 
 
 ## AI Assistant Usage
 
-This project was developed with significant assistance from Claude (Anthropic). See [`docs/ai_assistant_usage.md`](docs/ai_assistant_usage.md) for a detailed account of:
+I used an AI coding assistant as a development helper throughout this project, similar in role to Stack Overflow or a senior engineer to bounce ideas off. All architectural decisions, modeling choices, target definition, and evaluation methodology are my own. See [`docs/ai_assistant_usage.md`](docs/ai_assistant_usage.md) for a detailed account of:
 - Which tasks AI was used for
 - Particularly helpful prompts and interactions
 - Where AI-generated code required significant modification
