@@ -4,16 +4,20 @@ Stateless REST API that serves the trained XGBoost model. Deployed to **Google C
 
 ## Endpoints
 
+All prediction/lookup endpoints are versioned under `/v1`. `/docs` and `/openapi.json` sit at the root for convenience.
+
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/health` | Liveness probe (returns `{"status": "ok"}`) |
-| GET | `/players` | List of player IDs/names supported by the model |
-| GET | `/teams` | List of team IDs/names with defensive stats available |
-| POST | `/predict` | **Main endpoint** — predict underperformance probability |
+| GET | `/v1/health` | Liveness probe (returns `{"status": "ok", "model_loaded": ..., "n_feature_columns": ...}`) |
+| GET | `/v1/players?season=YYYY-YY` | List of player IDs/names supported by the model (optional `season` filter restricts to players who appeared in that season's playoffs) |
+| GET | `/v1/teams` | List of team IDs/names with defensive stats available |
+| GET | `/v1/matchups?player_id=...&season=YYYY-YY` | For a given player+season, return the opponents they actually faced in the playoffs and how many games each series went |
+| GET | `/v1/actual_result?player_id=...&season=YYYY-YY&opponent_team_id=...&series_game_number=...` | Return the actual Game Score for a specific historical playoff game, for comparison vs. the model's prediction |
+| POST | `/v1/predict` | **Main endpoint** — predict underperformance probability |
 | GET | `/docs` | Swagger UI (auto-generated from flask-restx) |
 | GET | `/openapi.json` | OpenAPI 3.0 schema |
 
-## `POST /predict`
+## `POST /v1/predict`
 
 **Request body:**
 ```json
@@ -75,6 +79,7 @@ pip install -r requirements.txt
 python app.py
 # → http://localhost:8080
 # Swagger UI → http://localhost:8080/docs
+# Example: curl http://localhost:8080/v1/health
 ```
 
 ## Run with Docker

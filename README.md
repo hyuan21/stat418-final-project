@@ -73,7 +73,7 @@ flowchart LR
     Train --> Model
     Model --> API
     Proc --> API
-    APP -->|REST POST /predict| API
+    APP -->|REST POST /v1/predict| API
     Browser -->|HTTPS| APP
 
     style NBA fill:#1d4ed8,color:#fff
@@ -91,7 +91,7 @@ A high-resolution architecture diagram is available in [`docs/architecture_diagr
 ```
 stat418-final-project/
 ├── data/                  # Raw + processed datasets (raw not committed)
-├── notebooks/             # EDA + training notebooks (4 numbered notebooks)
+├── notebooks/             # EDA notebook (see notebooks/README.md)
 ├── src/                   # Core Python package (data, models, utils)
 ├── api/                   # Flask API + Dockerfile + tests
 ├── app/                   # Streamlit App + Dockerfile
@@ -114,7 +114,7 @@ Each top-level directory contains its own `README.md` with details.
 
 ### Quick start (App + API together)
 ```bash
-git clone https://github.com/<your-username>/stat418-final-project.git
+git clone https://github.com/hyuan21/stat418-final-project.git
 cd stat418-final-project
 pip install -r requirements.txt
 
@@ -184,6 +184,20 @@ No information from game N or later is used in any feature. Splits are strictly 
 I used an AI coding assistant as a development helper throughout this project, similar in role to Stack Overflow or a senior engineer to bounce ideas off. All architectural decisions, modeling choices, target definition, and evaluation methodology are my own. See [`docs/ai_assistant_usage.md`](docs/ai_assistant_usage.md) for a detailed account of:
 - Which tasks AI was used for
 - Particularly helpful prompts and interactions
+- Where AI-generated code required significant modification
+- Lessons learned about collaborating with AI on a multi-component data project
+
+---
+
+## Author
+
+**Hanzhang Yuan** — STAT 418 (Spring 2026), UCLA Department of Statistics
+hyuan21@ucla.edu
+
+## License
+
+MIT — see [`LICENSE`](LICENSE) for details.
+rticularly helpful prompts and interactions
 - Where AI-generated code required significant modification
 - Lessons learned about collaborating with AI on a multi-component data project
 
