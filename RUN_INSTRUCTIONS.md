@@ -80,7 +80,7 @@ Pick a player, opponent, and game number; click Predict. You should see a probab
 
 ```bash
 git init
-git remote add origin https://github.com/HanzhangYuan/stat418-final-project.git
+git remote add origin https://github.com/hyuan21/stat418-final-project.git
 git add .
 git commit -m "Initial commit: complete pipeline + tests + docs"
 git push -u origin main

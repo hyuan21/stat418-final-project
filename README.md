@@ -26,7 +26,7 @@ The application is deployed in **two places** for redundancy during the evaluati
 
 ### Problem Framing
 - **Unit of analysis:** player-game (a single NBA player in a single playoff game)
-- **Target variable:** binary — `1` if Game Score in that playoff game falls more than 1.0 below the player's regular-season average Game Score, else `0`
+- **Target variable:** binary — `1` if the player's playoff Game Score falls more than `max(20% of their regular-season Game Score average, 1.0 GS)` below their regular-season baseline; else `0`. The relative-with-floor threshold treats stars and bench players fairly (a 1-point drop is noise for Jokić but a real slump for a role player).
 - **Performance metric:** [Hollinger Game Score](https://www.basketball-reference.com/about/glossary.html)
   ```
   GS = PTS + 0.4·FGM − 0.7·FGA − 0.4·(FTA−FTM) + 0.7·OREB + 0.3·DREB

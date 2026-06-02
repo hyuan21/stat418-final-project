@@ -321,7 +321,7 @@ All Python source uses structured logging via a single configured logger (`src/u
 ## 9. Reproducing this work
 
 ```bash
-git clone https://github.com/HanzhangYuan/stat418-final-project.git
+git clone https://github.com/hyuan21/stat418-final-project.git
 cd stat418-final-project
 pip install -r requirements.txt
 
