@@ -56,9 +56,9 @@ gcloud run deploy nba-playoff-api \
     --allow-unauthenticated
 ```
 
-Cloud Run prints the public URL when deployment completes. Test it:
+Cloud Run prints the public URL when deployment completes. Test it (the current live URL for this project is shown below; substitute your own URL if you have redeployed):
 ```bash
-curl https://nba-playoff-api-XXXXXX.run.app/v1/health
+curl https://nba-playoff-api-803317660037.us-central1.run.app/v1/health
 ```
 
 ### Automated CI/CD
@@ -81,7 +81,7 @@ The repo includes `.github/workflows/deploy.yml`. To enable it:
 ### Configure the API URL
 On Streamlit Cloud, go to your app's **Settings → Secrets** and add:
 ```toml
-API_URL = "https://nba-playoff-api-XXXXXX.run.app"
+API_URL = "https://nba-playoff-api-803317660037.us-central1.run.app"
 ```
 
 Streamlit will redeploy automatically. The app reads `API_URL` from
