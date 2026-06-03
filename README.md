@@ -197,17 +197,3 @@ hyuan21@ucla.edu
 ## License
 
 MIT — see [`LICENSE`](LICENSE) for details.
-rticularly helpful prompts and interactions
-- Where AI-generated code required significant modification
-- Lessons learned about collaborating with AI on a multi-component data project
-
----
-
-## Author
-
-**Hanzhang Yuan** — STAT 418 (Spring 2026), UCLA Department of Statistics
-hyuan21@ucla.edu
-
-## License
-
-MIT — see [`LICENSE`](LICENSE) for details.

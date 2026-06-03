@@ -61,3 +61,7 @@ nba_api_cache/
 pytest-cache-files-*/
 *.tmp
 ~$*
+
+# Office/LibreOffice lock files
+.~lock.*#
+*.tmp
